@@ -1,0 +1,17 @@
+{
+  "name": "smallchat",
+  "version": "1.0.0",
+  "description": "A node-js based IRC chat server",
+  "main": "index.js",
+  "author": "Herve07h22",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@types/node": "^20.8.10",
+    "esbuild": "^0.19.5"
+  },
+  "scripts": {
+    "build" : "esbuild src/smallchat.ts --bundle --platform=node --outfile=build/smallchat.js",
+    "start" : "yarn build && node build/smallchat.js"
+  }
+}

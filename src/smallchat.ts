@@ -1,12 +1,15 @@
 import net from "node:net";
+import { green, mention, yellow } from "./color";
 
 // client : nc 127.0.0.1 8124
 
-const WELCOME_MESSAGE =
-  "Welcome to smallchat 🔆 \r\nStart with /nick <your nickname> to join the chat.\r\n";
+const WELCOME_MESSAGE = yellow(
+  "Welcome to smallchat 🔆 \r\nStart with /nick <your nickname> to join the chat.\r\n"
+);
 
-const NICKNAME_BEFORE_CHAT =
-  "Before sending any message, start with /nick <your nickname> to join the chat.\r\n";
+const NICKNAME_BEFORE_CHAT = yellow(
+  "Before sending any message, start with /nick <your nickname> to join the chat.\r\n"
+);
 
 const SMALLCHAT_PORT = 8124;
 
@@ -23,7 +26,7 @@ class SmallChatClient {
       this.state = "disconnected";
       this.name &&
         this.server.sendMessageToOthers(
-          `${this.name} has left the chat 😿\r\n`,
+          green(`${this.name} has left the chat 😿\r\n`),
           this.name
         );
     });
@@ -39,17 +42,17 @@ class SmallChatClient {
     if (message.startsWith("/nick ")) {
       const name = message.slice(6).trim();
       if (this.server.nameAlreadyUsed(name)) {
-        this.sendMessage(`${name} is already used ❌ \r\n`);
+        this.sendMessage(yellow(`${name} is already used ❌ \r\n`));
         return;
       }
       this.name = name;
       this.server.sendMessageToOthers(
-        `${this.name} has joined the chat 🚀\r\n`,
+        green(`${this.name} has joined the chat 🚀\r\n`),
         this.name
       );
-      this.sendMessage(`Hello ${this.name} ! \r\n`);
+      this.sendMessage(yellow(`Hello ${this.name} ! \r\n`));
       this.sendMessage(
-        `${this.server.nbOfConnectedUsers()} user(s) connected. \r\n`
+        yellow(`${this.server.nbOfConnectedUsers()} user(s) connected. \r\n`)
       );
       return;
     }
@@ -57,12 +60,16 @@ class SmallChatClient {
       this.sendMessage(NICKNAME_BEFORE_CHAT);
       return;
     }
-    this.server.sendMessageToOthers(`${this.name} > ${message}`, this.name);
+    this.server.sendMessageToOthers(
+      green(`${this.name}>`) + message,
+      this.name
+    );
     this.logger(message);
   };
 
   sendMessage = (message: string) => {
-    this.state === "connected" && this.socket.write(message);
+    this.state === "connected" &&
+      this.socket.write(mention(message, this.name));
   };
 
   logger = (log: string) => {
